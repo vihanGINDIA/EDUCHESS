@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduChess - Professional Chess Coaching</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Dancing+Script');
+        @import url('https://fonts.googleapis.com/css?family=Lobster');
+        @import url('https://fonts.googleapis.com/css?family=Raleway');
+        @import url('https://fonts.googleapis.com/css?family=PT+Serif');
+        @import url('https://fonts.googleapis.com/css?family=Bungee');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background-color: black;
+            overflow-x: hidden;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .check-bg {
+            width: 100%;
+            height: 100vh;
+            background-color: #000000b0;
+            position: fixed;
+            background-image:
+                linear-gradient(45deg, #101311b0 25%, transparent 25%),
+                linear-gradient(-45deg, #101311b0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #101311b0 75%),
+                linear-gradient(-45deg, transparent 75%, #101311b0 75%);
+            background-size: 60px 60px;
+            background-position:
+                0 0,
+                0 30px,
+                30px -30px,
+                -30px 0;
+            z-index: -1;
+        }
+
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid rgba(151, 255, 151, 0.2);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(151, 255, 151, 0.5));
+        }
+
+        .nav-logo span {
+            font-family: 'PT Serif', cursive;
+            font-weight: 600;
+            font-size: 28px;
+            color: rgb(151, 255, 151);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-family: 'Raleway', sans-serif;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover {
+            color: rgb(151, 255, 151);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: rgb(151, 255, 151);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100vw;
+            padding-top: 0px;
+        }
+
+        #aligner {
+            width: 100%;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            margin-top: -90px;
+            justify-content: space-between;
+            padding: 50px 5%;
+            flex-wrap: wrap;
+        }
+
+        #container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        #main_text {
+            font-family: 'PT Serif', serif;
+            color: white;
+            line-height: 1.2;
+            font-size: clamp(40px, 8vw, 80px);
+            margin-left:40px;
+            padding: 0;
+        }
+
+        #main_text .chess-highlight {
+            font-family: 'Lobster', cursive;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                rgb(0, 177, 47),
+                rgb(49, 196, 36),
+                rgb(21, 219, 90),
+                rgb(85, 207, 136),
+                rgb(112, 255, 136),
+                rgb(116, 255, 137),
+                rgb(0, 255, 51)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #Add {
+            color: white;
+            margin: 30px 0 0 50px;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 300;
+            font-size: clamp(12px, 1.5vw, 16px);
+            line-height: 1.6;
+            position: relative;
+            display: inline-block;
+        }
+
+        #Add::before,
+        #Add::after {
+            content: '-';
+            font-weight: bolder;
+            font-size: 30px;
+            position: absolute;
+        }
+
+        #Add::before {
+            left: -30px;
+            top: -15px;
+        }
+
+        #Add::after {
+            left: 80px;
+            bottom: -10px;
+      }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin: 50px 0 0 35px;
+            flex-wrap: wrap;
+        }
+
+        #Demo,
+        #More {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bolder;
+            font-size: clamp(14px, 1.5vw, 20px);
+            height: 50px;
+            min-width: 200px;
+            padding: 0 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+
+        #Demo {
+            background-color: rgb(151, 255, 151);
+            color: black;
+            box-shadow:
+                0 0 20px rgba(151, 255, 151, 0.3),
+                0 0 40px rgba(151, 255, 151, 0.2);
+        }
+
+        #Demo:hover {
+            box-shadow:
+                0 0 30px rgba(151, 255, 151, 0.5),
+                0 0 60px rgba(151, 255, 151, 0.3);
+            transform: translateY(-2px);
+        }
+
+        #More {
+            background-color: transparent;
+            color: rgb(126, 255, 126);
+            border: 2px solid rgb(224, 255, 224);
+        }
+
+        #More:hover {
+            background-color: rgba(151, 255, 151, 0.1);
+            transform: translateY(-2px);
+        }
+
+        #scroller-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #scroller {
+            width: 100%;
+            max-width: 400px;
+            height: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 15%,
+                black 85%,
+                transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 15%,
+                black 85%,
+                transparent 100%
+            );
+        }
+
+        #scrolled {
+            width: 100%;
+            height: auto;
+            max-width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(151, 255, 151, 0.3);
+            transition: opacity 0.3s ease;
+        }
+
+        #scroll-indicators {
+            display: flex;
+            gap: 15px;
+            margin-top: 0px;
+        }
+
+        .indicator {
+            margin-top: -140px;
+            width: 50px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: rgb(151, 255, 151);
+            width: 70px;
+        }
+
+        #Transfer {
+            font-size: clamp(30px, 5vw, 50px);
+            font-weight: 100;
+            font-family: 'Courier New', Courier, monospace;
+            width: clamp(60px, 10vw, 80px);
+            height: clamp(60px, 10vw, 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(180deg);
+            border-radius: 50%;
+            background-color: rgba(197, 255, 215, 0.571);
+            color: rgb(175, 215, 186);
+            border: none;
+            cursor: pointer;
+            margin: 30px auto;
+            transition: background-color 0.2s ease;
+        }
+
+        #Transfer:hover {
+            background-color: rgba(197, 255, 215, 0.8);
+        }
+
+        #Info {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 5%;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        #img_hold {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #Board {
+            width: clamp(250px, 45vw, 550px);
+            height: auto;
+            transform: rotate(45deg);
+            opacity: 0.3;
+        }
+
+        #Holder {
+            position: absolute;
+            width: clamp(120px, 22vw, 280px);
+            left: calc(100vw-210px);
+            opacity: 0.7;
+            filter: drop-shadow(0 0 30px rgba(151, 255, 151, 0.5));
+        }
+
+        #Info-text {
+            flex: 1;
+            min-width: 280px;
+            max-width: 600px;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(12px, 1.4vw, 15px);
+            line-height: 1.8;
+            position: relative;
+            padding: 40px;
+        }
+
+        #Info-text::before {
+            content: '"';
+            font-family: 'Lobster', cursive;
+            font-size: clamp(60px, 10vw, 100px);
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: rgba(151, 255, 151, 0.3);
+            line-height: 1;
+        }
+
+        #Info-text::after {
+            content: '"';
+            font-family: 'Lobster', cursive;
+            font-size: clamp(60px, 10vw, 100px);
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            color: rgba(151, 255, 151, 0.3);
+            line-height: 1;
+        }
+
+        .footer {
+            width: 100%;
+            background: #050505;
+            padding: 80px 8%;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 60px;
+            border-top: 1px solid #1f1f1f;
+            margin-top: 100px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .footer-left h1 {
+            color: white;
+            font-size: clamp(32px, 6vw, 48px);
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            font-weight: 900;
+            font-family: 'PT Serif', cursive;
+            font-weight: bolder;
+        }
+
+        .footer-left p {
+            color: #7d7d7d;
+            line-height: 2;
+            font-size: 15px;
+        }
+
+        .footer-center h2,
+        .footer-right h2 {
+            color: white;
+            margin-bottom: 28px;
+            letter-spacing: 4px;
+            font-size: 22px;
+        }
+
+        .footer-center {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-center a {
+            color: #6f6f6f;
+            text-decoration: none;
+            margin-bottom: 18px;
+            transition: 0.3s;
+            width: fit-content;
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+
+        .footer-center a:hover {
+            color: white;
+            transform: translateX(8px);
+        }
+
+        .footer-right p {
+            color: #6f6f6f;
+            margin-bottom: 18px;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        .footer-right span {
+            color: white;
+            margin-right: 8px;
+        }
+
+        .footer-bottom {
+            width: 100%;
+            background: #000000;
+            border-top: 1px solid #111111;
+            color: #5f5f5f;
+            text-align: center;
+            padding: 28px;
+            letter-spacing: 3px;
+            font-size: 13px;
+        }
+
+        #Overlay {
+            position: fixed;
+            background-color: #000000;
+            opacity: 0;
+            z-index: 997;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            top: 0;
+            left: 0;
+        }
+
+        #Overlay.active {
+            opacity: 0.8;
+            pointer-events: all;
+        }
+
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 90%;
+            max-width: 600px;
+            height: 90vh;
+            max-height: 700px;
+            background-color: #d3fccd;
+            border-radius: 10px;
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 50px rgba(151, 255, 151, 0.5);
+        }
+
+        #popup.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #popup iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #popup-close {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            border-radius: 50%;
+            background-color: #ff4444;
+            color: white;
+            position: absolute;
+            right: -15px;
+            top: -15px;
+            border: 3px solid white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #popup-close:hover {
+            background-color: #cc0000;
+            transform: rotate(90deg);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @media (max-width:1000px) {
+            #Holder
+            {
+                left: calc(11vw);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            #aligner {
+                flex-direction: column;
+                gap: 50px;
+                justify-content: center;
+            }
+
+            #container,
+            #scroller-container {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            #Add {
+                margin-left: 0;
+            }
+
+            #Add::before,
+            #Add::after {
+                display: none;
+            }
+
+            .button-group {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            #Info {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                padding: 50px;
+                transition: right 0.3s ease;
+                border-left: 1px solid rgba(151, 255, 151, 0.2);
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 20px;
+                padding: 15px 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #Demo,
+            #More {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .footer {
+                padding: 50px 5%;
+                gap: 40px;
+                margin-top: 50px;
+            }
+
+            #popup {
+                width: 95%;
+                height: 80vh;
+            }
+
+            #popup-close {
+                right: 5px;
+                top: 5px;
+            }
+
+            #Board {
+                width: 70vw;
+            }
+
+            #Holder {
+                left: calc(100vw - 77vw);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-logo span {
+                font-size: 20px;
+            }
+
+            .nav-logo img {
+                height: 35px;
+            }
+
+            #main_text {
+                font-size: 36px;
+            }
+
+            .footer-left h1 {
+                font-size: 28px;
+            }
+
+            .indicator {
+                width: 40px;
+            }
+
+            .indicator.active {
+                width: 60px;
+            }
+
+            #Info-text {
+                padding: 30px 20px;
+                font-size: 12px;
+            }
+
+            #Info {
+                padding: 60px 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="check-bg"></div>
+
+    <div id="Overlay"></div>
+
+    <div id="popup">
+        <button id="popup-close">×</button>
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfRDHz31o1mayviCi9K2kwJub-yEvrtYUX82aGKwesmZFY5Zg/viewform?embedded=true" frameborder="0"></iframe>
+    </div>
+
+    <nav id="navbar">
+        <a href="#" class="nav-logo">
+            <img src="EDUCHESS.com.png" alt="EduChess Logo">
+            <span>EDUCHESS</span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#coaching">COACHING</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main id="home">
+        <div id="aligner">
+            <div id="container" class="fade-in">
+                <h1 id="main_text">
+                    Start Your<br>
+                    Journey Of<br>
+                    <span class="chess-highlight">Chess</span>
+                </h1>
+                <h5 id="Add">
+                    This is your one stop to start chess or revise fundamentals,<br>
+                    We will provide you with valuable tools, tips and tricks to get better at chess
+                </h5>
+                <div class="button-group">
+                    <button id="Demo">BOOK FREE DEMO</button>
+                    <button id="More">LOOK MORE</button>
+                </div>
+            </div>
+
+            <div id="scroller-container" class="fade-in">
+                <div id="scroller">
+                    <img id="scrolled" src="1.png" alt="Chess Board">
+                </div>
+                <div id="scroll-indicators">
+                    <div class="indicator active" data-index="0"></div>
+                    <div class="indicator" data-index="1"></div>
+                    <div class="indicator" data-index="2"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <section id="Info">
+        <div id="img_hold">
+            <img src="Board.png" id="Board" alt="Chess Board">
+            <img src="1piece.png" id="Holder" alt="Chess Piece">
+        </div>
+        <div id="Info-text">
+            Our chess coaching platform delivers a personalized 1-on-1 learning experience designed to help every player improve with confidence. Through advanced game analysis and dedicated coaching sessions, users receive tailored guidance based on their unique playing style, strengths, and weaknesses. From mastering openings to improving endgame strategies, our software creates a focused environment where players can learn directly from experienced chess mentors in real time.
+            <br><br>
+            With interactive lessons, move-by-move feedback, and customized training plans, our application transforms the way players train and grow. Every session is built to provide practical insights, smarter decision-making, and measurable progress. Whether you are just starting your chess journey or preparing for competitive tournaments, our platform gives you the tools, coaching, and support needed to reach the next level.
+        </div>
+    </section>
+
+    <footer class="footer" id="contact">
+        <div class="footer-section footer-left">
+            <h1>EDUCHESS</h1>
+            <p>
+                EduChess is a premium chess coaching platform built for players who want to improve through professional mentorship, advanced analysis, and structured learning. Train with confidence and elevate your chess performance through modern coaching systems.
+            </p>
+        </div>
+
+        <div class="footer-section footer-center" id="coaching">
+            <h2>NAVIGATION</h2>
+            <a href="#home">HOME</a>
+            <a href="#about">ABOUT</a>
+            <a href="#coaching">COACHING</a>
+            <a href="#contact">CONTACT</a>
+        </div>
+
+        <div class="footer-section footer-right">
+            <h2>COMPANY</h2>
+            <p><span>CEO</span> — VIHAN</p>
+            <p><span>COMPANY</span> — EDUCHESS</p>
+            <p><span>PHONE</span> — +91 7011302802</p>
+            <p><span>WEBSITE</span> — DESIGNED BY VIHAN</p>
+            <p><span>LOGO</span> — CREATED BY VIHAN</p>
+        </div>
+    </footer>
+
+    <div class="footer-bottom">
+        © 2026 EDUCHESS — ALL RIGHTS RESERVED
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
