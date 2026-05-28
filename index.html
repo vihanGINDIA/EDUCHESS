@@ -141,7 +141,7 @@
             min-height: calc(100vh - 80px);
             display: flex;
             align-items: center;
-            margin-top: -90px;
+            margin-top: calc(100vh - 790px);
             justify-content: space-between;
             padding: 50px 5%;
             flex-wrap: wrap;
@@ -583,10 +583,15 @@
         .fade-in {
             animation: fadeIn 0.8s ease-out;
         }
-        @media (max-width:1000px) {
+        @media (max-width:1025px) {
             #Holder
             {
                 left: calc(11vw);
+            }
+            #aligner
+            {
+                margin-top: calc(100vh - 650px);
+                
             }
         }
 
@@ -684,7 +689,11 @@
             }
 
             #Holder {
-                left: calc(100vw - 77vw);
+                left: calc(100vw - 78vw);
+            }
+            #main_text
+            {
+                margin-left: calc(100vw - 100vw);
             }
         }
 
@@ -736,13 +745,11 @@
 
     <nav id="navbar">
         <a href="#" class="nav-logo">
-            <img src="EDUCHESS.COM.png" alt="EduChess Logo">
+            <img src="EDUCHESS.com.png" alt="EduChess Logo">
             <span>EDUCHESS</span>
         </a>
         <ul class="nav-links" id="navLinks">
             <li><a href="#home">HOME</a></li>
-            <li><a href="#about">ABOUT</a></li>
-            <li><a href="#coaching">COACHING</a></li>
             <li><a href="#contact">CONTACT</a></li>
         </ul>
         <div class="hamburger" id="hamburger">
