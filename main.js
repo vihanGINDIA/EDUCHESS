@@ -1,4 +1,3 @@
-
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 const overlay = document.getElementById('Overlay');
@@ -6,7 +5,6 @@ const popup = document.getElementById('popup');
 const popupClose = document.getElementById('popup-close');
 const demoButton = document.getElementById('Demo');
 const moreButton = document.getElementById('More');
-const transferButton = document.getElementById('Transfer');
 const scrolledImage = document.getElementById('scrolled');
 const infoText = document.getElementById('Info-text');
 const holderImage = document.getElementById('Holder');
@@ -73,8 +71,6 @@ function scrollToInfo() {
         block: 'start'
     });
 }
-
-transferButton.addEventListener('click', scrollToInfo);
 moreButton.addEventListener('click', scrollToInfo);
 
 function updateCarousel(index) {
@@ -97,8 +93,23 @@ function updateCarousel(index) {
     });
 }
 
+// FIXED: Adding click listeners with pointer-events fix
 indicators.forEach((indicator, index) => {
-    indicator.addEventListener('click', () => {
+    indicator.style.pointerEvents = 'auto';
+    indicator.style.position = 'relative';
+    indicator.style.zIndex = '10';
+    
+    indicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        console.log('Indicator clicked:', index);
+        updateCarousel(index);
+        resetAutoScroll();
+    });
+    
+    // Also add mousedown as backup
+    indicator.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         updateCarousel(index);
         resetAutoScroll();
     });
